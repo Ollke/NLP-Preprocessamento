@@ -9,7 +9,7 @@ Este é um script que implementa um serviço de pré-processamento de texto usan
 ```
 docker build -t nome-da-imagem .
 ```
-* Uma vez que a imagem seja construída com sucesso, você pode executar um contêiner baseado nessa imagem com o seguinte comando (substitua nome-do-container pelo nome que você deseja dar ao contêiner):
+* Uma vez que a imagem seja construída com sucesso, você pode executar um contêiner baseado nessa imagem com o seguinte comando:
 ```
 docker run -p 3000:3000 nome-da-imagem
 ```
