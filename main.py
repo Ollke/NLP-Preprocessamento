@@ -9,26 +9,34 @@ from spacy.lang.en.stop_words import STOP_WORDS
 
 app = FastAPI()
 
-# Carregue o modelo de idioma
-nlp = spacy.load("en_core_web_sm")
+# Carregua os modelos de idioma
+nlp_en = spacy.load("en_core_web_sm")
+nlp_pt = spacy.load("pt_core_news_sm")
+
 
 # Modelo de dados Pydantic para a entrada JSON
 class JSONRequest(BaseModel):
-    texto: str
+    text: str
+    model: str = "en"
     remove_special_chars: bool = False
     lemmatize: bool = False
     remove_stopwords: bool = False
 
 @app.post("/")
 async def root(json: JSONRequest):
-    texto = json.texto
+    text = json.text
 
     # Remove caracteres especiais usando string.punctuation (opcional)
     if json.remove_special_chars:
-        texto = "".join([char for char in texto if char not in string.punctuation])
+        text = "".join([char for char in text if char not in string.punctuation])
 
-    # Processamento de texto
-    doc = nlp(texto)
+    # Carregue o modelo de idioma
+    if(json.model.lower() == "en"):
+        doc = nlp_en(text)
+    elif(json.model.lower() == "pt"):
+        doc = nlp_pt(text)
+    else:
+        raise HTTPException(status_code=404, detail="Model not found")
 
     # Lematização (opcional)
     if json.lemmatize:
@@ -42,8 +50,12 @@ async def root(json: JSONRequest):
 
     # Retorne o texto pré-processado como uma string
     return JSONResponse(content={
-        "TextoBase": json.texto,
-        "TextoPreProcessado": " ".join(tokens)
+        "text": json.text,
+        "model": json.model,
+        "remove_special_chars": json.remove_special_chars,
+        "lemmatize": json.lemmatize,
+        "remove_stopwords": json.remove_stopwords,
+        "response": " ".join(tokens)
     })
 
 if __name__ == "__main__":

@@ -13,6 +13,9 @@ RUN pip install fastapi uvicorn spacy pydantic
 # Baixe o modelo do spaCy (en_core_web_sm)
 RUN python -m spacy download en_core_web_sm
 
+# Baixe o modelo do spaCy (pt_core_news_sm)
+RUN python -m spacy download pt_core_news_sm
+
 # Expõe a porta em que o aplicativo estará em execução
 EXPOSE 3000
 
