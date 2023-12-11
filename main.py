@@ -5,7 +5,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
-from spacy.lang.en.stop_words import STOP_WORDS
+from spacy.lang.en.stop_words import STOP_WORDS as STOP_WORDS_EN
+from spacy.lang.pt.stop_words import STOP_WORDS as STOP_WORDS_PT
 
 app = FastAPI()
 
@@ -46,7 +47,11 @@ async def root(json: JSONRequest):
 
     # Remoção de stopwords (opcional)
     if json.remove_stopwords:
-        tokens = [token for token in tokens if token.lower() not in STOP_WORDS]
+        if(json.model.lower() == "en"):
+            tokens = [token for token in tokens if token.lower() not in STOP_WORDS_EN]
+        elif(json.model.lower() == "pt"):
+            tokens = [token for token in tokens if token.lower() not in STOP_WORDS_PT]
+        
 
     # Retorne o texto pré-processado como uma string
     return JSONResponse(content={
